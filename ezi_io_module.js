@@ -14,6 +14,7 @@ module.exports = class ezi_io_module_class {
         });
         this.client.on('data', (data) => {
             let ret = read_data_req(data);
+            console.log(ret.toString('hex'));
         });
         this.client.on('error', () => {
             console.log(`ezi-io module ${this.id} Connection fail`);
