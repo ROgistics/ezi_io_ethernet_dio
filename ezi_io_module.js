@@ -14,7 +14,6 @@ module.exports = class ezi_io_module_class {
         });
         this.client.on('data', (data) => {
             let ret = read_data_req(data);
-            this.nxt_sync_num = ret.nxt_sync_num;
         });
         this.client.on('error', () => {
             console.log(`ezi-io module ${this.id} Connection fail`);
@@ -35,12 +34,13 @@ module.exports = class ezi_io_module_class {
         let chk_sync_num = this.cur_sync_data.cur_sync_num;
         let chk_frame_type = this.cur_sync_data.cur_frame_type;
         if ((read_data[2] == chk_sync_num) && (read_data[4] == chk_frame_type) && (read_data[5] == 0x00)) {
+            this.nxt_sync_num = ((data[2] + 1) <= 254) ? (data[2] + 1) : 0;
             if (read_data[4] == 0xc1 || read_data[4] == 0xc4 || read_data[4] == 0xc6 || read_data[4] == 0xc7
                 || read_data[4] == 0xc8 || read_data[4] == 0xcb || read_data[4] == 0xcc || read_data[4] == 0xcd) {
-                ret = { nxt_sync_num: ((data[2] + 1) <= 254) ? (data[2] + 1) : 0, cur_frame_type: data[4], cur_read_data: [0x00] };
+                ret = { cur_frame_type: data[4], cur_read_data: [0x00] };
             }
             else {
-                ret = { nxt_sync_num: ((data[2] + 1) <= 254) ? (data[2] + 1) : 0, cur_frame_type: data[4], cur_read_data: read_data };
+                ret = { cur_frame_type: data[4], cur_read_data: read_data };
             }
         }
         return ret;
