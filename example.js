@@ -21,8 +21,11 @@ create_connection("105", "192.168.0.105", 2002);
 create_connection("37", "192.168.0.37", 2002);
 
 setTimeout(()=>{
-    ezi_io_modules['105'].client.destroy();
-    delete ezi_io_modules['105'];
+    let ret = ezi_io_modules['105'].destroy_client();
+    if(ret == false)
+    {
+        delete ezi_io_modules['105'];
+    }
 },1000);
 setTimeout(()=>{
     ezi_io_modules['37].write_data_req(0x01);
