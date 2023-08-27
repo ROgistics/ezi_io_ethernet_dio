@@ -3,12 +3,14 @@ const net = require('net');
 module.exports = class ezi_io_module_class {
     constructor(id, host, port) {
         this.id = id;
+        this.connection = false;
         this.cur_sync_data = { cur_sync_num: 0, cur_frame_type: 0 };
         this.nxt_sync_num = 0;
         this.client = new net.Socket();
 
         this.client.connect(port, host, () => {
             console.log(`ezi-io module ${this.id} Connected to ${host} device ${module}`);
+            this.connection = true;
         });
         this.client.on('data', (data) => {
             let ret = read_data_req(data);
@@ -16,10 +18,12 @@ module.exports = class ezi_io_module_class {
         });
         this.client.on('error', () => {
             console.log(`ezi-io module ${this.id} Connection fail`);
+            this.connection = false;
             this.client.destroy();
         });
         this.client.on('close', () => {
             console.log(`ezi-io module ${this.id} Connection closed`);
+            this.connection = false;
             this.client.destroy();
         });
     }
