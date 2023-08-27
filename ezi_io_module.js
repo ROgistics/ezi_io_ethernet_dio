@@ -16,11 +16,11 @@ module.exports = class ezi_io_module_class {
         });
         this.client.on('error', () => {
             console.log(`ezi-io module ${this.id} Connection fail`);
-            destroy_connection(this);
+            this.client.destroy();
         });
         this.client.on('close', () => {
             console.log(`ezi-io module ${this.id} Connection closed`);
-            destroy_connection(this);
+            this.client.destroy();
         });
     }
     read_data_req(read_data) {
@@ -55,9 +55,5 @@ module.exports = class ezi_io_module_class {
         let cur_sync_data = { cur_sync_num: nxt_sync_no, cur_frame_type: req_frame_type };
         return cur_sync_data;
     }
-    destroy_connection(selected_module) {
-    ezi_io_modules[selected_module.id].client.destroy();
-    delete ezi_io_modules[selected_module.id];
-}
 }
 
