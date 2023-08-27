@@ -55,5 +55,9 @@ module.exports = class ezi_io_module_class {
         let cur_sync_data = { cur_sync_num: nxt_sync_no, cur_frame_type: req_frame_type };
         return cur_sync_data;
     }
+    destroy_connection(selected_module) {
+    ezi_io_modules[selected_module.id].client.destroy();
+    delete ezi_io_modules[selected_module.id];
+}
 }
 
