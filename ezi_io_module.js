@@ -18,14 +18,17 @@ module.exports = class ezi_io_module_class {
         });
         this.client.on('error', () => {
             console.log(`ezi-io module ${this.id} Connection fail`);
-            this.connection = false;
-            this.client.destroy();
+            destroy_client();
         });
         this.client.on('close', () => {
             console.log(`ezi-io module ${this.id} Connection closed`);
-            this.connection = false;
-            this.client.destroy();
+            destroy_client();
         });
+    }
+    destroy_client()
+    {
+        this.connection = false;
+        this.client.destroy();
     }
     read_data_req(read_data) {
         let ret;
