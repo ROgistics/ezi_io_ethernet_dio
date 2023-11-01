@@ -1,11 +1,13 @@
 const net = require('net');
 
-module.exports = class ezi_io_module_class {
+const ezi_io_module_class = class{
     constructor(id, host, port) {
-        this.id = id;
+
+        this.id = 'ezi_'+id;
         this.connection = false;
         this.cur_sync_data = { cur_sync_num: 0, cur_frame_type: 0 };
         this.nxt_sync_num = 0;
+        this.schedulingCall={};
         this.client = new net.Socket();
 
         this.client.connect(port, host, () => {
@@ -25,16 +27,16 @@ module.exports = class ezi_io_module_class {
                 else {
                     ret = { cur_frame_type: data[4], cur_read_data: read_data };
                 }
+                console.log(ret.toString('hex'));
             }
-            console.log(ret.toString('hex'));
         });
         this.client.on('error', () => {
             console.log(`ezi-io module ${this.id} Connection fail`);
-            this.connection = destroy_client();
+            this.connection = this.destroy_client();
         });
         this.client.on('close', () => {
             console.log(`ezi-io module ${this.id} Connection closed`);
-            this.connection = destroy_client();
+            this.connection = this.destroy_client();
         });
     }
     destroy_client()
@@ -59,5 +61,14 @@ module.exports = class ezi_io_module_class {
         let cur_sync_data = { cur_sync_num: nxt_sync_no, cur_frame_type: req_frame_type };
         return cur_sync_data;
     }
+    repeatIntervalWriteData = (schedulingName, req_frame_type, req_data, tm) => {
+        this.schedulingCall[schedulingName] = setInterval(()=>{
+            this.cur_sync_data = this.write_data_req(req_frame_type, req_data);
+        },tm);
+    }
+    stopIntervalWriteData = (schedulingName) => {
+        clearInterval(this.schedulingCall[schedulingName]);
+    }
 }
 
+module.exports = { ezi_io_module_class }
